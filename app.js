@@ -17,45 +17,44 @@ function render() {
     <article>
       <input id='voice-input' type='text' />
       <article id='display-options'>Options</article>
-      <button> speak </button> 
+      <button onclick='say()'> speak </button> 
   </article>
   `
 }
 
-function renderOptions(options){
+function renderOptions(options, parentElement){
   let displayOptions = document.getElementById('display-options')
   let mapped = new Map(Object.entries(options))
   Object.keys(options).map((key) => {
-    console.log(options[key])
-    console.log(typeof options[key])
     let div = document.createElement('div')
     div.textContent = key
-    //let renderedChildren = renderChildren(options[key])
-    div.onclick = () => { addText(key), renderOptions(options[key])}
-    displayOptions.appendChild(div)
+    div.id = key
+    div.onclick = () => { addText(key), renderOptions(options[key], div)}
     
+    if (parentElement) {
+      parentElement.insertAdjacentElement('afterend',div)
+    }else {
+      displayOptions.appendChild(div)
+    }
+        
   })
-}
-
-function renderChildren(content){
-  console.log(content)
-  let div = document.createElement('div')
-  div.textContent = content
-  div.onclick = () => addText(content)
 }
 
 //Actions 
 
 function addText(content) {
-  //console.log('clicked')
   let input = document.getElementById('voice-input')
   input.value += ` ${content}`
 }
 
-function speak(){
+export function say(){
+  let synth = window.speechSynthesis
+  let voiceInput = document.getElementById('voice-input')
+  let utterance = new SpeechSynthesisUtterance(voiceInput.value)
+  utterance.lang = 'en-US'
   
-  
-  
+  synth.speak(utterance)
+    
 }
 
 
